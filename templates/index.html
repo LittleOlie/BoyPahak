@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EuroMillions Probabilities</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>EuroMillions Results and Probabilities</h1>
+
+    <h2>Most Common Numbers</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Number</th>
+                <th>Percentage</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for number in most_common_numbers %}
+            <tr>
+                <td>{{ number }}</td>
+                <td>{{ number_percentages[number]:.2f }}%</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Least Common Numbers</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Number</th>
+                <th>Percentage</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for number in least_common_numbers %}
+            <tr>
+                <td>{{ number }}</td>
+                <td>{{ number_percentages[number]:.2f }}%</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Most Common Stars</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Star</th>
+                <th>Percentage</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for star in most_common_stars %}
+            <tr>
+                <td>{{ star }}</td>
+                <td>{{ star_percentages[star]:.2f }}%</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Least Common Stars</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Star</th>
+                <th>Percentage</th>
+            </

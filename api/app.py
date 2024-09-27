@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, render_template, jsonify
 import requests
 from collections import Counter
 
@@ -19,6 +19,7 @@ def fetch_past_results():
             results.append((date, main_numbers, stars))
         return results
     else:
+        print("Failed to fetch data:", response.status_code)
         return []
 
 def get_highest_lowest_probability_numbers(previous_results):
@@ -35,8 +36,35 @@ def get_highest_lowest_probability_numbers(previous_results):
 
     return most_common_numbers, least_common_numbers, most_common_stars, least_common_stars
 
+def calculate_percentage(counts, total_draws):
+    return {num: (count / total_draws) * 100 for num, count in counts.items()}
+
 @app.route('/')
 def index():
+    previous_results = fetch_past_results()
+
+    if not previous_results:
+        return "No results fetched. Please check the API.", 500
+
+    most_common_numbers, least_common_numbers, most_common_stars, least_common_stars = get_highest_lowest_probability_numbers(previous_results)
+
+    number_counts = Counter([number for result in previous_results for number in result[1]])
+    star_counts = Counter([star for result in previous_results for star in result[2]])
+
+    total_draws = len(previous_results)
+    number_percentages = calculate_percentage(number_counts, total_draws)
+    star_percentages = calculate_percentage(star_counts, total_draws)
+
+    return render_template('index.html', 
+                           most_common_numbers=most_common_numbers, 
+                           least_common_numbers=least_common_numbers,
+                           most_common_stars=most_common_stars, 
+                           least_common_stars=least_common_stars,
+                           number_percentages=number_percentages,
+                           star_percentages=star_percentages)
+
+@app.route('/api/results')
+def api_results():
     previous_results = fetch_past_results()
 
     if not previous_results:
@@ -44,12 +72,20 @@ def index():
 
     most_common_numbers, least_common_numbers, most_common_stars, least_common_stars = get_highest_lowest_probability_numbers(previous_results)
 
-    # Return results as JSON
+    number_counts = Counter([number for result in previous_results for number in result[1]])
+    star_counts = Counter([star for result in previous_results for star in result[2]])
+
+    total_draws = len(previous_results)
+    number_percentages = calculate_percentage(number_counts, total_draws)
+    star_percentages = calculate_percentage(star_counts, total_draws)
+
     return jsonify({
         "most_common_numbers": most_common_numbers,
         "least_common_numbers": least_common_numbers,
         "most_common_stars": most_common_stars,
-        "least_common_stars": least_common_stars
+        "least_common_stars": least_common_stars,
+        "number_percentages": number_percentages,
+        "star_percentages": star_percentages
     })
 
 if __name__ == "__main__":
